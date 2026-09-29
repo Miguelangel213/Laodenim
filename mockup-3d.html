@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAODENIM — Mockup 3D Spline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-soft: #F5F4F0;
+  --bg-dark: #0a0a0a;
+  --text: #0A0A0A;
+  --text-2: #5C5C5C;
+  --text-light: #F2EDE4;
+  --text-light-dim: rgba(242,237,228,0.5);
+  --indigo: #1B3A8C;
+  --indigo-light: #4B7BD5;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-display); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid #EBEBEB;
+}
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1140px; margin: 0 auto; padding: 14px 32px;
+}
+.logo { font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 0.14em; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { font-family: var(--font-body); font-size: 13px; color: var(--text-2); transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.btn-nav { font-family: var(--font-body); font-size: 12px; font-weight: 600; padding: 10px 20px; background: var(--text); color: #fff; letter-spacing: 0.02em; transition: background 0.3s; }
+.btn-nav:hover { background: var(--indigo); }
+
+.context-label {
+  text-align: center;
+  padding: 120px 32px 24px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* === 3D SECTION === */
+.product-3d {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 32px 120px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 85vh;
+  align-items: center;
+}
+
+.product-viewer {
+  position: relative;
+  aspect-ratio: 1;
+  max-height: 80vh;
+  background: var(--bg-soft);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewer-scene {
+  position: relative;
+  width: 70%;
+  height: 70%;
+}
+
+/* Simulated 3D jacket with CSS */
+.jacket {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.jacket-body {
+  width: 260px;
+  height: 320px;
+  background: linear-gradient(175deg, #1a3466 0%, #142a54 40%, #0f2040 100%);
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+  transform: perspective(800px) rotateY(-12deg) rotateX(2deg);
+  box-shadow:
+    -20px 20px 60px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+  animation: float 6s ease-in-out infinite;
+}
+.jacket-body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, transparent 0px, transparent 1px, rgba(255,255,255,0.02) 1px, rgba(255,255,255,0.02) 2px);
+  background-size: 3px 3px;
+  border-radius: inherit;
+}
+.jacket-body::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 45%; right: 45%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(100,140,200,0.08) 0%, rgba(100,140,200,0.02) 30%, transparent 50%);
+  border-radius: inherit;
+}
+.jacket-collar {
+  position: absolute;
+  top: -8px; left: 20%; right: 20%;
+  height: 40px;
+  background: linear-gradient(175deg, #1f3d73, #15305c);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+}
+.jacket-collar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 30px;
+  background: rgba(0,0,0,0.2);
+}
+.jacket-pocket-l, .jacket-pocket-r {
+  position: absolute;
+  width: 65px; height: 50px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0 0 4px 4px;
+  border-top: none;
+  top: 50%;
+}
+.jacket-pocket-l { left: 18%; }
+.jacket-pocket-r { right: 18%; }
+.jacket-seam {
+  position: absolute;
+  top: 10%; left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 80%;
+  background: rgba(0,0,0,0.15);
+}
+.jacket-buttons {
+  position: absolute;
+  top: 30%; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.jacket-btn {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #8a7550;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15);
+}
+.jacket-sleeve-l, .jacket-sleeve-r {
+  position: absolute;
+  bottom: 5%;
+  width: 55px; height: 140px;
+  background: linear-gradient(175deg, #17305e, #112444);
+  border-radius: 4px;
+  box-shadow: -8px 12px 30px rgba(0,0,0,0.2);
+}
+.jacket-sleeve-l { left: -15%; transform: rotate(8deg); }
+.jacket-sleeve-r { right: -15%; transform: rotate(-8deg); }
+
+/* Spotlight */
+.viewer-light {
+  position: absolute;
+  top: -10%; left: 30%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(75,123,213,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Drag hint */
+.viewer-hint {
+  position: absolute;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.6;
+}
+.viewer-hint svg { width: 16px; height: 16px; opacity: 0.5; animation: hint-drag 2s ease-in-out infinite; }
+
+@keyframes hint-drag {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: perspective(800px) rotateY(-12deg) rotateX(2deg) translateY(0); }
+  50% { transform: perspective(800px) rotateY(-12deg) rotateX(2deg) translateY(-12px); }
+}
+
+/* Product info */
+.product-info {
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+.product-info h2 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 420px;
+}
+.product-info h2 em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--indigo);
+}
+.product-tagline {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--text-2);
+  line-height: 1.65;
+  max-width: 380px;
+}
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid #E0E0E0;
+}
+.product-detail {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 14px;
+}
+.product-detail-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  min-width: 80px;
+}
+.product-detail-value {
+  color: var(--text);
+}
+.product-cta {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 15px 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s var(--ease);
+  cursor: pointer;
+}
+.btn-primary { background: var(--indigo); color: #fff; }
+.btn-primary:hover { background: #142C6B; transform: translateY(-2px); }
+.btn-ghost { background: transparent; color: var(--text); border-bottom: 1.5px solid var(--text); padding: 15px 4px; }
+.btn-ghost:hover { border-color: var(--indigo); color: var(--indigo); }
+
+/* Spline badge */
+.spline-badge {
+  position: absolute;
+  top: 20px; right: 20px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  opacity: 0.5;
+}
+
+/* Section divider */
+.divider {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.divider-line {
+  border: none;
+  border-top: 1px solid #E0E0E0;
+}
+
+/* Below section */
+.below-section {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  text-align: center;
+}
+.below-section h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.below-section p {
+  color: var(--text-2);
+  font-size: 15px;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* Annotation arrows */
+.annotation {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+}
+.anno-box {
+  background: var(--indigo);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 8px 14px;
+  line-height: 1.45;
+  max-width: 200px;
+  box-shadow: 0 4px 20px rgba(27,58,140,0.3);
+}
+.anno-1 { top: 22%; right: 52%; }
+.anno-2 { bottom: 30%; right: 54%; }
+.anno-3 { top: 36%; left: 4%; }
+
+@media (max-width: 900px) {
+  .product-3d { grid-template-columns: 1fr; }
+  .product-info { padding: 32px 0; }
+  .annotation { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <nav class="nav">
+    <a href="/" class="logo">LAODENIM</a>
+    <div class="nav-links">
+      <a href="#">Modalidad</a>
+      <a href="#">Clases</a>
+      <a href="#">Precios</a>
+      <a href="#">FAQ</a>
+    </div>
+    <a href="#" class="btn-nav">Inscríbete</a>
+  </nav>
+</header>
+
+<p class="context-label">Mockup — Así se vería la sección 3D con Spline</p>
+
+<section class="product-3d">
+  <div class="product-viewer">
+    <span class="spline-badge">Spline 3D viewer</span>
+    <div class="viewer-light"></div>
+    <div class="viewer-scene">
+      <div class="jacket">
+        <div class="jacket-body">
+          <div class="jacket-collar"></div>
+          <div class="jacket-seam"></div>
+          <div class="jacket-pocket-l"></div>
+          <div class="jacket-pocket-r"></div>
+          <div class="jacket-buttons">
+            <div class="jacket-btn"></div>
+            <div class="jacket-btn"></div>
+            <div class="jacket-btn"></div>
+          </div>
+          <div class="jacket-sleeve-l"></div>
+          <div class="jacket-sleeve-r"></div>
+        </div>
+      </div>
+    </div>
+    <div class="viewer-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
+      Arrastra para girar
+    </div>
+  </div>
+
+  <div class="product-info">
+    <h2>Chaqueta oversize <em>reconstruida</em></h2>
+    <p class="product-tagline">Dos jeans transformados en una pieza única. Costura visible, teñido shibori, acabado artesanal. Hecha por ti en el taller.</p>
+    <div class="product-details">
+      <div class="product-detail">
+        <span class="product-detail-label">Técnica</span>
+        <span class="product-detail-value">Reconstrucción + Shibori</span>
+      </div>
+      <div class="product-detail">
+        <span class="product-detail-label">Clase</span>
+        <span class="product-detail-value">05 — Reconstrucción total</span>
+      </div>
+      <div class="product-detail">
+        <span class="product-detail-label">Material</span>
+        <span class="product-detail-value">100% denim reciclado</span>
+      </div>
+    </div>
+    <div class="product-cta">
+      <a href="#" class="btn btn-primary">Inscribirme al taller</a>
+      <a href="#" class="btn btn-ghost">Ver las 8 clases</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr class="divider-line"></div>
+
+<section class="below-section">
+  <h3>En producción, aquí irá el modelo real</h3>
+  <p>Se modela la prenda en Spline (o se importa un .glb de CLO 3D / Blender) y se embede con &lt;spline-viewer&gt;. El usuario puede girar, hacer zoom, y ver la textura del denim en detalle.</p>
+</section>
+
+<!-- Annotations -->
+<div class="annotation anno-1"><div class="anno-box">Aquí va el modelo 3D real de Spline — el usuario lo gira con el mouse</div></div>
+<div class="annotation anno-2"><div class="anno-box">Materiales PBR simulan la textura real del denim</div></div>
+
+</body>
+</html>
