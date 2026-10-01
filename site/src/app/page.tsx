@@ -1,5 +1,5 @@
 import { Hero } from "@/components/hero";
-import { Reel } from "@/components/reel";
+import { PiecePortal } from "@/components/piece-portal";
 import { Manifesto } from "@/components/manifesto";
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
@@ -31,7 +31,7 @@ export default function Home() {
 
       <main id="main">
         <Hero />
-        <Reel />
+        <PiecePortal />
         <Manifesto />
 
         <section className="block taller">

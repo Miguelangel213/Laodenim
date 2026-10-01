@@ -13,7 +13,7 @@ export function Nav() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const st = ScrollTrigger.create({
-      trigger: "#piezas",
+      trigger: ".manifesto",
       start: "top 40px",
       onToggle: (self) => setLight(self.isActive || self.progress === 1),
     });

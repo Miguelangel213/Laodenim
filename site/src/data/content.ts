@@ -19,6 +19,33 @@ export const pieces = [
   { src: "/img/tiedye-4.png", alt: "Camiseta con tie-dye azul en espiral", name: "Espiral índigo", tag: "Clase 2, tie-dye" },
 ];
 
+export const pieceFacts: [string, string][][] = [
+  [
+    ["Técnica:", "Espiral con pinzas y bandas elásticas."],
+    ["Colores:", "Naranja y azul índigo sobre fondo oscuro."],
+    ["Clase:", "Clase 2, tie-dye y decoloración."],
+    ["Resultado:", "Una prenda única: no hay dos espirales iguales."],
+  ],
+  [
+    ["Técnica:", "Shibori: plegado y amarre antes del tinte."],
+    ["Colores:", "Azul índigo y blanco, con rayos desde el centro."],
+    ["Clase:", "Clase 2, tie-dye y decoloración."],
+    ["Resultado:", "Un estallido que cambia según cómo doblas la tela."],
+  ],
+  [
+    ["Técnica:", "Bleached: se decolora y luego se tiñe encima."],
+    ["Colores:", "Morado, negro y destellos claros."],
+    ["Clase:", "Clase 2, tie-dye y decoloración."],
+    ["Resultado:", "Efecto galaxia, pensado para vender como pieza de colección."],
+  ],
+  [
+    ["Técnica:", "Espiral clásica, con más capas de tinte."],
+    ["Colores:", "Tonos de índigo, del azul profundo al casi blanco."],
+    ["Clase:", "Clase 2, tie-dye y decoloración."],
+    ["Resultado:", "El color del denim, llevado a una prenda nueva."],
+  ],
+];
+
 export const manifesto =
   "Un jean viejo no es basura, es la tela más resistente de tu closet. Lo desarmamos, lo tiñemos y lo volvemos a coser hasta que sea tuyo.";
 
