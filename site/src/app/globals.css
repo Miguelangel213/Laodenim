@@ -476,7 +476,7 @@ html[data-loaded] .hero-title .line > span { animation-play-state: running; }
   .px-wrap { top: 38%; width: min(240px, 62vw); }
   .px-content { left: 18px; right: 18px; bottom: 18px; display: block; }
   .px-title { margin-bottom: 14px; font-size: clamp(64px, 22vw, 120px); }
-  .px-facts { width: 100%; font-size: 13px; }
+  .px-facts { width: 100%; font-size: 13px; padding-right: 56px; }
   .px-fact { grid-template-columns: 82px 1fr; padding: 5px 0; }
   .px-portal { border-radius: 70px; }
 }
