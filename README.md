@@ -59,7 +59,7 @@ Cada push a `main` publica en GitHub Pages con `.github/workflows/deploy.yml`. P
 
 ```
 site/
-├── public/             Video del hero (hero.mp4) e imágenes
+├── public/             Cuadros del hero (hero-frames/) e imágenes
 └── src/
     ├── app/            Página, estilos globales y metadatos
     ├── components/     Hero, tira de piezas, manifiesto, nav, preloader

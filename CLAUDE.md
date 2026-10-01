@@ -10,7 +10,7 @@ Next.js 16 (App Router, `output: "export"`), React 19, TypeScript, Tailwind CSS 
 - `site/src/data/content.ts` — todos los textos, precios, clases y FAQ
 - `site/src/components/` — hero (video por scroll), reel (tira horizontal), manifesto, nav, preloader
 - `site/src/app/globals.css` — estilos (tokens en `:root`)
-- `site/public/` — `hero.mp4` e imágenes
+- `site/public/` — `hero-frames/` (60 cuadros JPG del hero) e imágenes
 - `docs/` — marca, sistema de diseño v1, auditoría v1
 
 ## Design direction
