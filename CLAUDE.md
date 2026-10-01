@@ -12,19 +12,19 @@ Plain HTML + CSS + vanilla JS. No framework, no build step, no package manager. 
 
 - `index.html` — single page, all sections
 - `style.css` — all styles, mobile-first responsive
-- `script.js` — scroll-linked video, nav toggle, reveal animations
+- `script.js` — scroll-linked hero video, horizontal pieces reel, nav toggle
 - `video.mp4` — hero background video (scroll-animated)
 - `design.md` — design system tokens and decisions
 - `AUDIT.md` — visual/technical audit (reference, not active)
 
 ## Design direction
 
-Editorial fashion — inspired by OUONA, Celine, Acne Studios. The hero uses a scroll-linked video with "LAODENIM" as giant brand typography. The rest of the page is clean white with indigo accents. See `design.md` for the full token system.
+Editorial fashion — inspired by the OYLA jewelry site, Celine, Acne Studios. The hero is a rounded, inset frame with a scroll-linked video and a giant condensed-serif headline bottom-left. The rest is white with 1px black hairlines, pill buttons with a + icon, and indigo as the single accent. See `design.md` for the full token system.
 
 ## Key conventions
 
 - Mobile-first CSS (base styles = mobile, `min-width` media queries scale up)
-- Two font families only: Inter (UI/brand) + Fraunces (editorial/headings)
+- Two font families only: Instrument Serif (display/headings) + Inter (UI/body)
 - No monospace fonts, no ALL-CAPS tracked labels, no numbered markers on non-sequential content
 - Indigo (#1B3A8C) is the primary brand color — derived from actual denim dye
 - All CTAs link to WhatsApp (replace `57XXXXXXXXXX` with real number)
