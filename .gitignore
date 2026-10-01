@@ -1,0 +1,30 @@
+# Dependencies and builds
+node_modules/
+.next/
+out/
+build/
+
+# Secrets and local config (never commit)
+.env
+.env.*
+!.env.example
+.vercel/
+.claude/settings.local.json
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+*.tsbuildinfo
+
+# Python caches from bundled skills
+__pycache__/
+*.pyc
+
+# Screen recordings
+*.mov

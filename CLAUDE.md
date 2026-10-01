@@ -1,36 +1,28 @@
 # LAODENIM — Project Conventions
 
 ## What is this
-
-Landing page for LAODENIM, a denim upcycling workshop in Envigado, Antioquia, Colombia. The site sells an 8-Saturday workshop where students transform old jeans into new fashion pieces.
+Sitio del taller LAODENIM (upcycling denim, Envigado). Vende un taller de 8 sábados. Ver `README.md` y `docs/brand-context-laodenim.md`.
 
 ## Stack
-
-Plain HTML + CSS + vanilla JS. No framework, no build step, no package manager. Files are served directly.
+Next.js 16 (App Router, `output: "export"`), React 19, TypeScript, Tailwind CSS 4, Motion, GSAP + ScrollTrigger, Lenis. Todo vive en `site/`. Antes de tocar APIs de Next lee `site/node_modules/next/dist/docs/` (ver `site/AGENTS.md`).
 
 ## Files
-
-- `index.html` — single page, all sections
-- `style.css` — all styles, mobile-first responsive
-- `script.js` — scroll-linked video, nav toggle, reveal animations
-- `video.mp4` — hero background video (scroll-animated)
-- `design.md` — design system tokens and decisions
-- `AUDIT.md` — visual/technical audit (reference, not active)
+- `site/src/data/content.ts` — todos los textos, precios, clases y FAQ
+- `site/src/components/` — hero (video por scroll), reel (tira horizontal), manifesto, nav, preloader
+- `site/src/app/globals.css` — estilos (tokens en `:root`)
+- `site/public/` — `hero-frames/` (60 cuadros JPG del hero) e imágenes
+- `docs/` — marca, sistema de diseño v1, auditoría v1
 
 ## Design direction
+Editorial, inspirado en OYLA: marco redondeado con video, titular serif grande, líneas finas de 1px, botones píldora con "+", índigo (#1B3A8C) como único acento.
 
-Editorial fashion — inspired by OUONA, Celine, Acne Studios. The hero uses a scroll-linked video with "LAODENIM" as giant brand typography. The rest of the page is clean white with indigo accents. See `design.md` for the full token system.
+## Conventions
+- Mobile-first, `min-width` media queries
+- Dos fuentes: Instrument Serif (display) + Inter (UI/texto)
+- Sin monoespaciada, sin etiquetas en mayúsculas espaciadas, sin números en contenido no secuencial
+- Accesibilidad: skip link, focus-visible, aria-labels, `prefers-reduced-motion`
+- Sin comentarios salvo restricciones no obvias
+- No inventar reseñas ni testimonios
 
-## Key conventions
-
-- Mobile-first CSS (base styles = mobile, `min-width` media queries scale up)
-- Two font families only: Inter (UI/brand) + Fraunces (editorial/headings)
-- No monospace fonts, no ALL-CAPS tracked labels, no numbered markers on non-sequential content
-- Indigo (#1B3A8C) is the primary brand color — derived from actual denim dye
-- All CTAs link to WhatsApp (replace `57XXXXXXXXXX` with real number)
-- Accessibility: skip link, focus-visible, aria-labels, prefers-reduced-motion
-- No comments in code unless explaining a non-obvious constraint
-
-## WhatsApp
-
-All "Inscribirme" and "Reservar" buttons point to `wa.me/57XXXXXXXXXX`. Replace with the real phone number before deploying.
+## WhatsApp y secretos
+El número sale de `NEXT_PUBLIC_WHATSAPP` (`site/.env.local`, ignorado por git). Nunca commitear `.env*` ni tokens.
