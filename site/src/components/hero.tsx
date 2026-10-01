@@ -88,30 +88,43 @@ export function Hero() {
       if (reduced) return;
       await extract();
       if (cancelled) return;
-      if (isBlank(frames[TOTAL_FRAMES - 1])) { canvas.hidden = true; return; }
+      if (isBlank(frames[TOTAL_FRAMES - 1])) canvas.hidden = true;
       const state = { frame: 0 };
-      tween = gsap.to(state, {
-        frame: TOTAL_FRAMES - 1,
-        ease: "none",
+      const tl = gsap.timeline({
+        defaults: { ease: "none" },
         scrollTrigger: {
           trigger: ".hero",
           start: "top top",
-          end: "+=220%",
-          scrub: 0.3,
+          end: "+=380%",
+          scrub: 0.4,
           pin: true,
           anticipatePin: 1,
           refreshPriority: 10,
         },
+      });
+      tl.set(".hero-mark", { opacity: 1 }, 0);
+      tl.to(state, {
+        frame: TOTAL_FRAMES - 1,
+        duration: 10,
         onUpdate: () => {
           const f = Math.round(state.frame);
           if (f !== current && frames[f]) { current = f; draw(f); }
         },
-      });
+      }, 0)
+        .to(".hero-copy", { y: -60, opacity: 0, duration: 1.6, ease: "power2.in" }, 0.8)
+        .to(".hero-frame", { "--gap": "0px", borderRadius: 0, duration: 2.6, ease: "power2.inOut" }, 1.2)
+        .fromTo(".hero-mark .char", { yPercent: 115 }, { yPercent: 0, stagger: 0.18, duration: 1.4, ease: "power4.out" }, 3.6)
+        .fromTo(".hero-tagline", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" }, 5.4)
+        .to(".hero-mark .char", { yPercent: -115, stagger: 0.1, duration: 1.1, ease: "power3.in" }, 8)
+        .to(".hero-tagline", { opacity: 0, duration: 0.8 }, 8)
+        .to(".hero-frame", { opacity: 0, duration: 1, ease: "power1.in" }, 9);
+      tween = tl as unknown as gsap.core.Tween;
       ScrollTrigger.refresh();
     };
 
     size();
-    window.addEventListener("resize", size);
+    const ro = new ResizeObserver(size);
+    ro.observe(frame);
     video.addEventListener("loadeddata", onReady);
     video.addEventListener("canplay", onReady);
     video.load();
@@ -119,7 +132,7 @@ export function Hero() {
 
     return () => {
       cancelled = true;
-      window.removeEventListener("resize", size);
+      ro.disconnect();
       video.removeEventListener("loadeddata", onReady);
       video.removeEventListener("canplay", onReady);
       tween?.scrollTrigger?.kill();
@@ -133,6 +146,14 @@ export function Hero() {
         <canvas className="hero-canvas" ref={canvasRef} aria-hidden="true" />
         <video className="hero-video" ref={videoRef} src={asset("/hero.mp4")} muted playsInline preload="auto" />
         <div className="hero-shade" aria-hidden="true" />
+        <div className="hero-mark" aria-hidden="true">
+          <p className="hero-mark-word">
+            {"LAODENIM".split("").map((c, i) => (
+              <span className="char-wrap" key={i}><span className="char">{c}</span></span>
+            ))}
+          </p>
+          <p className="hero-tagline">Hecho con lo que ya tienes</p>
+        </div>
         <div className="hero-copy">
           <h1 className="hero-title">
             <span className="line"><span>Transforma,</span></span>
