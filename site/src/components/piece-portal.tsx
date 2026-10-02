@@ -143,6 +143,8 @@ export function PiecePortal() {
     let raf = 0;
     let last = performance.now();
     let visible = true;
+    let hover = 0;
+    let hovering = false;
 
     const resize = () => {
       const d = Math.min(window.devicePixelRatio || 1, 2);
@@ -200,24 +202,58 @@ export function PiecePortal() {
       const ay = ((rot.current.y * (1 - e)) * Math.PI) / 180;
       if (w > 1 && h > 1) {
         const pts = roundedPoints(w, h, r);
+        const trace = () => {
+          ctx.beginPath();
+          pts.forEach(([x, y], i) => {
+            const xx = x * Math.cos(ay);
+            const yy = y * Math.cos(ax);
+            const z = x * Math.sin(ay) - y * Math.sin(ax);
+            const p = PERSPECTIVE / (PERSPECTIVE + z);
+            const sx = cx + xx * p, sy = cy + yy * p;
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+          });
+          ctx.closePath();
+        };
+        const edge = 1 - e;
+        hover += ((hovering ? 1 : 0) - hover) * Math.min(1, dt * 0.01);
+        const pulse = reduced.current ? 0.5 : (Math.sin(now / 650) + 1) / 2;
+
+        if (edge > 0.02) {
+          ctx.save();
+          trace();
+          ctx.shadowColor = `rgba(0, 0, 0, ${0.6 * edge})`;
+          ctx.shadowBlur = 50;
+          ctx.shadowOffsetY = 24;
+          ctx.fillStyle = "#030303";
+          ctx.fill();
+          ctx.restore();
+        }
+
         ctx.save();
-        ctx.beginPath();
-        pts.forEach(([x, y], i) => {
-          const xx = x * Math.cos(ay);
-          const yy = y * Math.cos(ax);
-          const z = x * Math.sin(ay) - y * Math.sin(ax);
-          const p = PERSPECTIVE / (PERSPECTIVE + z);
-          const sx = cx + xx * p, sy = cy + yy * p;
-          if (i === 0) ctx.moveTo(sx, sy);
-          else ctx.lineTo(sx, sy);
-        });
-        ctx.closePath();
+        trace();
         ctx.clip();
         ctx.fillStyle = "#030303";
         ctx.fillRect(0, 0, W, H);
         cover(nextPoster);
         if (e > 0) shade();
         ctx.restore();
+
+        if (edge > 0.02) {
+          ctx.save();
+          trace();
+          ctx.lineJoin = "round";
+          ctx.shadowColor = `rgba(140, 185, 255, ${edge})`;
+          ctx.shadowBlur = 22 + pulse * 22 + hover * 18;
+          ctx.lineWidth = 2.5 + hover * 1.5;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.92 * edge})`;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.lineWidth = 9 + pulse * 6;
+          ctx.strokeStyle = `rgba(150, 195, 255, ${(0.1 + 0.1 * pulse + 0.12 * hover) * edge})`;
+          ctx.stroke();
+          ctx.restore();
+        }
       }
     };
 
@@ -235,6 +271,12 @@ export function PiecePortal() {
     const ro = new ResizeObserver(resize);
     ro.observe(section);
     resize();
+    const enter = () => (hovering = true);
+    const leave = () => (hovering = false);
+    portal.addEventListener("pointerenter", enter);
+    portal.addEventListener("pointerleave", leave);
+    portal.addEventListener("focus", enter);
+    portal.addEventListener("blur", leave);
     section.addEventListener("pointermove", onMove);
     section.addEventListener("pointerleave", onLeave);
     raf = requestAnimationFrame(frame);
@@ -242,6 +284,10 @@ export function PiecePortal() {
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
+      portal.removeEventListener("pointerenter", enter);
+      portal.removeEventListener("pointerleave", leave);
+      portal.removeEventListener("focus", enter);
+      portal.removeEventListener("blur", leave);
       section.removeEventListener("pointermove", onMove);
       section.removeEventListener("pointerleave", onLeave);
     };
