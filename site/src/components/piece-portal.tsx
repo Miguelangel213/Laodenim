@@ -57,6 +57,8 @@ export function PiecePortal() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const portalRef = useRef<HTMLButtonElement>(null);
   const indexRef = useRef(0);
+  const nextRef = useRef(1);
+  const [nextIdx, setNextIdx] = useState(1);
   const busyRef = useRef(false);
   const exp = useRef(0);
   const maskScale = useRef(1);
@@ -79,21 +81,27 @@ export function PiecePortal() {
     });
   }, []);
 
-  const travel = useCallback(async () => {
+  const travel = useCallback(async (to?: number) => {
     if (busyRef.current || !ready) return;
     busyRef.current = true;
     target.current = { x: 0, y: 0 };
-    const next = (indexRef.current + 1) % pieces.length;
-    if (reduced.current) {
+    const next = to ?? (indexRef.current + 1) % pieces.length;
+    nextRef.current = next;
+    setNextIdx(next);
+    const settle = () => {
       indexRef.current = next;
       setIndex(next);
+      nextRef.current = (next + 1) % pieces.length;
+      setNextIdx(nextRef.current);
+    };
+    if (reduced.current) {
+      settle();
       busyRef.current = false;
       return;
     }
     sectionRef.current?.classList.add("is-transitioning");
     await animate((v) => (exp.current = v), 1100);
-    indexRef.current = next;
-    setIndex(next);
+    settle();
     exp.current = 0;
     maskScale.current = 0;
     sectionRef.current?.classList.remove("is-transitioning");
@@ -175,7 +183,7 @@ export function PiecePortal() {
       cover(ps[cur]);
       shade();
 
-      const nextPoster = ps[(cur + 1) % ps.length];
+      const nextPoster = ps[nextRef.current];
       const sr = section.getBoundingClientRect();
       const pr = portal.getBoundingClientRect();
       const e = exp.current;
@@ -239,7 +247,7 @@ export function PiecePortal() {
     };
   }, []);
 
-  const next = (index + 1) % pieces.length;
+  const next = nextIdx;
 
   return (
     <section id="piezas" className="px" ref={sectionRef} aria-label="Piezas hechas en el taller">
@@ -248,7 +256,9 @@ export function PiecePortal() {
 
       <ol className="px-list" aria-label="Piezas">
         {pieces.map((p, i) => (
-          <li key={p.src} className={i === index ? "px-item active" : "px-item"}>{p.name}</li>
+          <li key={p.src} className={i === index ? "px-item active" : "px-item"}>
+            <button type="button" onClick={() => i !== index && travel(i)} aria-current={i === index} disabled={i === index}>{p.name}</button>
+          </li>
         ))}
       </ol>
 
@@ -261,11 +271,12 @@ export function PiecePortal() {
           ref={portalRef}
           className="px-portal"
           type="button"
-          onClick={travel}
+          onClick={() => travel()}
           aria-label={`Ver la siguiente pieza: ${pieces[next].name}`}
         >
           <span className="px-enter" aria-hidden="true">Ver</span>
         </button>
+        <p className="px-hint">Toca la ventana o elige una pieza de la lista</p>
       </div>
 
       <div className="px-content" key={index} aria-live="polite">

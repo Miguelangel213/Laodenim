@@ -12,7 +12,10 @@ const instrument = Instrument_Serif({
 const description =
   "Transforma jeans viejos en piezas únicas. Taller de 8 sábados en Envigado o virtual. Tie-dye, bordado, reconstrucción y tu propia colección cápsula. Desde $420.000 COP.";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://miguelangel213.github.io/Laodenim/"),
   title: "LAODENIM — Taller de upcycling denim en Envigado",
   description,
   openGraph: {
@@ -21,8 +24,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_CO",
     siteName: "LAODENIM",
+    images: [{ url: `${basePath}/og.png`, width: 1600, height: 640, alt: "LAODENIM, taller de upcycling denim" }],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", images: [`${basePath}/og.png`] },
 };
 
 export const viewport: Viewport = { themeColor: "#1b3a8c" };

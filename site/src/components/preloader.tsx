@@ -8,8 +8,9 @@ export function Preloader() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const t = setTimeout(() => setShow(false), reduce ? 0 : 1100);
-    return () => clearTimeout(t);
+    const t = setTimeout(() => setShow(false), reduce ? 0 : 900);
+    const safety = setTimeout(() => document.documentElement.setAttribute("data-loaded", ""), 2400);
+    return () => { clearTimeout(t); clearTimeout(safety); };
   }, []);
 
   return (
