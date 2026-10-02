@@ -57,6 +57,8 @@ export function PiecePortal() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const portalRef = useRef<HTMLButtonElement>(null);
   const indexRef = useRef(0);
+  const nextRef = useRef(1);
+  const [nextIdx, setNextIdx] = useState(1);
   const busyRef = useRef(false);
   const exp = useRef(0);
   const maskScale = useRef(1);
@@ -79,21 +81,27 @@ export function PiecePortal() {
     });
   }, []);
 
-  const travel = useCallback(async () => {
+  const travel = useCallback(async (to?: number) => {
     if (busyRef.current || !ready) return;
     busyRef.current = true;
     target.current = { x: 0, y: 0 };
-    const next = (indexRef.current + 1) % pieces.length;
-    if (reduced.current) {
+    const next = to ?? (indexRef.current + 1) % pieces.length;
+    nextRef.current = next;
+    setNextIdx(next);
+    const settle = () => {
       indexRef.current = next;
       setIndex(next);
+      nextRef.current = (next + 1) % pieces.length;
+      setNextIdx(nextRef.current);
+    };
+    if (reduced.current) {
+      settle();
       busyRef.current = false;
       return;
     }
     sectionRef.current?.classList.add("is-transitioning");
     await animate((v) => (exp.current = v), 1100);
-    indexRef.current = next;
-    setIndex(next);
+    settle();
     exp.current = 0;
     maskScale.current = 0;
     sectionRef.current?.classList.remove("is-transitioning");
@@ -135,6 +143,8 @@ export function PiecePortal() {
     let raf = 0;
     let last = performance.now();
     let visible = true;
+    let hover = 0;
+    let hovering = false;
 
     const resize = () => {
       const d = Math.min(window.devicePixelRatio || 1, 2);
@@ -175,7 +185,7 @@ export function PiecePortal() {
       cover(ps[cur]);
       shade();
 
-      const nextPoster = ps[(cur + 1) % ps.length];
+      const nextPoster = ps[nextRef.current];
       const sr = section.getBoundingClientRect();
       const pr = portal.getBoundingClientRect();
       const e = exp.current;
@@ -192,24 +202,58 @@ export function PiecePortal() {
       const ay = ((rot.current.y * (1 - e)) * Math.PI) / 180;
       if (w > 1 && h > 1) {
         const pts = roundedPoints(w, h, r);
+        const trace = () => {
+          ctx.beginPath();
+          pts.forEach(([x, y], i) => {
+            const xx = x * Math.cos(ay);
+            const yy = y * Math.cos(ax);
+            const z = x * Math.sin(ay) - y * Math.sin(ax);
+            const p = PERSPECTIVE / (PERSPECTIVE + z);
+            const sx = cx + xx * p, sy = cy + yy * p;
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+          });
+          ctx.closePath();
+        };
+        const edge = 1 - e;
+        hover += ((hovering ? 1 : 0) - hover) * Math.min(1, dt * 0.01);
+        const pulse = reduced.current ? 0.5 : (Math.sin(now / 650) + 1) / 2;
+
+        if (edge > 0.02) {
+          ctx.save();
+          trace();
+          ctx.shadowColor = `rgba(0, 0, 0, ${0.6 * edge})`;
+          ctx.shadowBlur = 50;
+          ctx.shadowOffsetY = 24;
+          ctx.fillStyle = "#030303";
+          ctx.fill();
+          ctx.restore();
+        }
+
         ctx.save();
-        ctx.beginPath();
-        pts.forEach(([x, y], i) => {
-          const xx = x * Math.cos(ay);
-          const yy = y * Math.cos(ax);
-          const z = x * Math.sin(ay) - y * Math.sin(ax);
-          const p = PERSPECTIVE / (PERSPECTIVE + z);
-          const sx = cx + xx * p, sy = cy + yy * p;
-          if (i === 0) ctx.moveTo(sx, sy);
-          else ctx.lineTo(sx, sy);
-        });
-        ctx.closePath();
+        trace();
         ctx.clip();
         ctx.fillStyle = "#030303";
         ctx.fillRect(0, 0, W, H);
         cover(nextPoster);
         if (e > 0) shade();
         ctx.restore();
+
+        if (edge > 0.02) {
+          ctx.save();
+          trace();
+          ctx.lineJoin = "round";
+          ctx.shadowColor = `rgba(140, 185, 255, ${edge})`;
+          ctx.shadowBlur = 22 + pulse * 22 + hover * 18;
+          ctx.lineWidth = 2.5 + hover * 1.5;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.92 * edge})`;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.lineWidth = 9 + pulse * 6;
+          ctx.strokeStyle = `rgba(150, 195, 255, ${(0.1 + 0.1 * pulse + 0.12 * hover) * edge})`;
+          ctx.stroke();
+          ctx.restore();
+        }
       }
     };
 
@@ -227,6 +271,12 @@ export function PiecePortal() {
     const ro = new ResizeObserver(resize);
     ro.observe(section);
     resize();
+    const enter = () => (hovering = true);
+    const leave = () => (hovering = false);
+    portal.addEventListener("pointerenter", enter);
+    portal.addEventListener("pointerleave", leave);
+    portal.addEventListener("focus", enter);
+    portal.addEventListener("blur", leave);
     section.addEventListener("pointermove", onMove);
     section.addEventListener("pointerleave", onLeave);
     raf = requestAnimationFrame(frame);
@@ -234,12 +284,16 @@ export function PiecePortal() {
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
+      portal.removeEventListener("pointerenter", enter);
+      portal.removeEventListener("pointerleave", leave);
+      portal.removeEventListener("focus", enter);
+      portal.removeEventListener("blur", leave);
       section.removeEventListener("pointermove", onMove);
       section.removeEventListener("pointerleave", onLeave);
     };
   }, []);
 
-  const next = (index + 1) % pieces.length;
+  const next = nextIdx;
 
   return (
     <section id="piezas" className="px" ref={sectionRef} aria-label="Piezas hechas en el taller">
@@ -248,7 +302,9 @@ export function PiecePortal() {
 
       <ol className="px-list" aria-label="Piezas">
         {pieces.map((p, i) => (
-          <li key={p.src} className={i === index ? "px-item active" : "px-item"}>{p.name}</li>
+          <li key={p.src} className={i === index ? "px-item active" : "px-item"}>
+            <button type="button" onClick={() => i !== index && travel(i)} aria-current={i === index} disabled={i === index}>{p.name}</button>
+          </li>
         ))}
       </ol>
 
@@ -261,11 +317,12 @@ export function PiecePortal() {
           ref={portalRef}
           className="px-portal"
           type="button"
-          onClick={travel}
+          onClick={() => travel()}
           aria-label={`Ver la siguiente pieza: ${pieces[next].name}`}
         >
           <span className="px-enter" aria-hidden="true">Ver</span>
         </button>
+        <p className="px-hint">Toca la ventana o elige una pieza de la lista</p>
       </div>
 
       <div className="px-content" key={index} aria-live="polite">

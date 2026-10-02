@@ -3,6 +3,7 @@ import { PiecePortal } from "@/components/piece-portal";
 import { Manifesto } from "@/components/manifesto";
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
+import { ScrollProgress } from "@/components/scroll-progress";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { asset } from "@/lib/utils";
 import { facts, faqs, modes, modules, prices, whatsapp, nav } from "@/data/content";
@@ -27,6 +28,7 @@ export default function Home() {
       <a href="#main" className="skip-link">Ir al contenido principal</a>
       <Preloader />
       <SmoothScroll />
+      <ScrollProgress />
       <Nav />
 
       <main id="main">
@@ -107,6 +109,7 @@ export default function Home() {
             {prices.map((p) => (
               <article className={p.featured ? "precio precio-feat" : "precio"} key={p.title}>
                 <h3>{p.title}</h3>
+                {p.featured && <span className="precio-save">Ahorras $80.000</span>}
                 <p className="precio-amount">{p.amount}<span>COP</span></p>
                 <p className="precio-desc">{p.text}</p>
                 <Pill href={whatsapp(p.msg)} ink={!p.featured} label={p.label}>{p.cta}</Pill>

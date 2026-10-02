@@ -418,6 +418,9 @@ html[data-loaded] .hero-title .line > span { animation-play-state: running; }
   display: flex; flex-direction: column; gap: 6px; font-size: 16px;
 }
 .px-item { display: flex; align-items: center; min-height: 20px; opacity: 0.85; }
+.px-item button { color: inherit; font: inherit; text-align: left; padding: 4px 0; opacity: 0.9; transition: opacity 0.2s, transform 0.3s var(--ease); }
+.px-item button:not(:disabled):hover { opacity: 1; transform: translateX(4px); }
+.px-item button:disabled { cursor: default; }
 .px-item.active { font-size: 18px; font-weight: 600; gap: 8px; opacity: 1; }
 .px-item.active::before { content: ''; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
 .px-wrap {
@@ -481,3 +484,36 @@ html[data-loaded] .hero-title .line > span { animation-play-state: running; }
   .px-portal { border-radius: 70px; }
 }
 @media (prefers-reduced-motion: reduce) { .px-title, .px-fact { animation: none; } }
+
+/* ---------- Hero: escenas por scroll ---------- */
+.hero-layers { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: #0b0806; }
+.hero-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform, opacity; }
+.hero-layer:nth-child(n + 2) { opacity: 0; }
+.hero-dust { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; mix-blend-mode: screen; }
+.hero-chaps { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.hero-chap {
+  position: absolute; left: 50%; top: clamp(84px, 14vh, 150px); transform: translateX(-50%);
+  width: min(720px, 86vw); text-align: center; opacity: 0; text-shadow: 0 2px 24px rgba(0,0,0,0.7);
+}
+.hero-chap h2 { font-size: clamp(34px, 5vw, 68px); line-height: 1; max-width: none; }
+.hero-chap p { margin-top: 14px; font-size: 15px; color: rgba(255,255,255,0.9); }
+.hero-end { position: absolute; left: 50%; bottom: clamp(32px, 7vh, 72px); transform: translateX(-50%); opacity: 0; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .hero-chaps { display: none; } .hero-dust { display: none; } }
+
+/* ---------- Mejoras de UX ---------- */
+body { font-size: 16px; }
+html { scroll-padding-top: 72px; }
+section[id] { scroll-margin-top: 72px; }
+.pill { transition: gap 0.3s var(--ease), background 0.3s, transform 0.2s var(--ease); }
+.pill:active { transform: scale(0.97); }
+.px :focus-visible, .hero :focus-visible, .cta :focus-visible, .header--dark :focus-visible { outline-color: #fff; }
+.px-hint { margin-top: 14px; font-size: 12px; text-align: center; color: rgba(255,255,255,0.75); text-shadow: 0 1px 12px rgba(0,0,0,0.7); }
+@media (hover: none) { .px-enter { opacity: 1; } }
+.precio-save { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #fff; color: var(--indigo); }
+.progress { position: fixed; left: 0; top: 0; height: 2px; width: 100%; background: var(--indigo); transform-origin: 0 50%; transform: scaleX(0); z-index: 120; pointer-events: none; }
+.hero-shade {
+  background:
+    linear-gradient(to top, rgba(5, 8, 24, 0.72) 0%, rgba(5, 8, 24, 0.2) 36%, rgba(5, 8, 24, 0) 60%),
+    linear-gradient(to bottom, rgba(5, 8, 24, 0.55) 0%, rgba(5, 8, 24, 0) 32%);
+}
+@media (max-width: 640px) { .px-hint { display: none; } }
