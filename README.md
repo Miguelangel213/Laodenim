@@ -59,7 +59,7 @@ Cada push a `main` publica en GitHub Pages con `.github/workflows/deploy.yml`. P
 
 ```
 site/
-├── public/             Cuadros del hero (hero-frames/) e imágenes
+├── public/             Videos (video/, garment-360/) e imágenes
 └── src/
     ├── app/            Página, estilos globales y metadatos
     ├── components/     Hero, tira de piezas, manifiesto, nav, preloader

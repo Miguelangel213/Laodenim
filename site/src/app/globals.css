@@ -481,3 +481,31 @@ html[data-loaded] .hero-title .line > span { animation-play-state: running; }
   .px-portal { border-radius: 70px; }
 }
 @media (prefers-reduced-motion: reduce) { .px-title, .px-fact { animation: none; } }
+
+/* ---------- Hero background (video drop-in) ---------- */
+.hero-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; background: #0b1230; transform-origin: 50% 50%; }
+.hero-poster {
+  position: absolute; left: 50%; top: 50%; width: 150%; max-width: none;
+  transform: translate(-50%, -50%); opacity: 0.55;
+  animation: hero-drift 24s ease-in-out infinite alternate;
+}
+.hero-bg .hero-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 1.2s ease; pointer-events: none;
+}
+.hero-bg .hero-video.is-ready { opacity: 1; }
+@keyframes hero-drift { from { transform: translate(-52%, -50%) scale(1); } to { transform: translate(-48%, -52%) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .hero-poster { animation: none; } }
+
+/* ---------- Prenda 360 ---------- */
+.g360 { position: relative; height: 100vh; height: 100svh; min-height: 560px; background: #120d0a; color: #f3ece4; overflow: hidden; }
+.g360-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.g360-steps { position: absolute; inset: 0; pointer-events: none; }
+.g360-step {
+  position: absolute; left: clamp(20px, 5vw, 72px); bottom: clamp(32px, 8vh, 96px);
+  max-width: 34ch; opacity: 0;
+}
+.g360-step h2 { font-size: clamp(48px, 8vw, 120px); line-height: 0.9; margin-bottom: 14px; }
+.g360-step p { font-size: 15px; color: rgba(243,236,228,0.8); }
+@media (min-width: 1024px) { .g360-step:nth-child(even) { left: auto; right: clamp(20px, 5vw, 72px); } }
+@media (prefers-reduced-motion: reduce) { .g360-step { opacity: 1; position: static; padding: 24px; } .g360-steps { position: static; } }

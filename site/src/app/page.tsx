@@ -1,5 +1,6 @@
 import { Hero } from "@/components/hero";
 import { PiecePortal } from "@/components/piece-portal";
+import { Garment360 } from "@/components/garment-360";
 import { Manifesto } from "@/components/manifesto";
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
@@ -32,6 +33,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <PiecePortal />
+        <Garment360 />
         <Manifesto />
 
         <section className="block taller">
