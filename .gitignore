@@ -28,3 +28,7 @@ __pycache__/
 
 # Screen recordings
 *.mov
+
+# Clips de video en bruto (pesados)
+/clips/*
+!/clips/.gitkeep
